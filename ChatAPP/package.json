@@ -1,0 +1,50 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@apollo/client": "^3.3.20",
+    "@apollo/react-hooks": "^4.0.0",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "antd": "^4.16.0",
+    "apollo-link-ws": "^1.0.20",
+    "apollo-server-express": "^2.25.2",
+    "dotenv-defaults": "^2.0.2",
+    "graphql": "^15.5.0",
+    "graphql-import": "^1.0.2",
+    "mongoose": "^5.12.15",
+    "papaparse": "^5.3.1",
+    "react": "^17.0.2",
+    "react-apollo": "^3.1.5",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "subscriptions-transport-ws": "^0.9.19",
+    "web-vitals": "^1.0.1"
+  },
+    "scripts": {
+    "start": "node server.js",
+    "build": "react-scripts build && (cd backend && yarn install)",
+    "start_react": "react-scripts start"
+  },
+  "type": "module",
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
