@@ -1,5 +1,4 @@
 const Mutation = {
-
     async createChatBox(parent, { name1, name2 }, { db, pubsub }, info) {
         const makeName = (name, to) => {
             return [name, to].sort().join('_');
@@ -15,7 +14,8 @@ const Mutation = {
         }
         const newUser = async (db, name1, name2) => {
             const chatBoxName = makeName(name1, name2);
-            let box = await new db.ChatBoxModel({ name: chatBoxName }).save();
+            let box = await new db.ChatBoxModel({ name: chatBoxName, }).save();
+            console.log(chatBoxName)
             return box;
         }
         if (!name1 || !name2) throw new Error("missing chatbox name");
@@ -33,6 +33,17 @@ const Mutation = {
         }
     },
     async createMessage(parent, { key, body, me }, { db, pubsub }, info) {
+        const dateNow = new Date();
+        const year = dateNow.getFullYear();
+        const month = dateNow.getMonth()+1;// January is 0 by default in JS. Offsetting +1 to fix date for calendar.
+        const date = dateNow.getDate();
+        const hour = dateNow.getHours();
+        const minute = dateNow.getMinutes();
+        const atualminute = minute.toString().length < 2 ?  `0${minute}`: `${minute}`;
+        const second = dateNow.getSeconds();
+        const millisecond = dateNow.getUTCMilliseconds();
+        const newDate = `${year}:${month}:${date}`
+        const time = `${hour}:${atualminute}:${second}`
         const makeName = (name, to) => {
             return [name, to].sort().join('_');
         };
@@ -68,7 +79,7 @@ const Mutation = {
         const sender = await checkUser(name,db);
         const receiver = await checkUser(friend,db);
         const chatbox = await checkChatbox(chatBoxName,[sender,receiver],db);
-        const newMessage = new db.MessageModel({sender:sender,body:body});
+        const newMessage = new db.MessageModel({sender:sender,body:body,time:time,date:newDate});
         await newMessage.save();
         chatbox.messages.push(newMessage);
         await chatbox.save();

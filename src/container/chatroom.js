@@ -14,22 +14,14 @@ import {
 } from '../graphql';
 import { isTypeNode } from "graphql";
 const { TabPane } = Tabs;
+const LOCALSTORAGE_chatbox = "chatbox"
 const ChatRoom = ({ me, displayStatus }) => {
-    // const [chatBoxes, setChatBoxes] = useState([
-    //     {
-    //         friend: "Mary", key: "MaryChatbox",
-    //         chatLog: []
-    //     },
-    //     {
-    //         friend: "Peter", key: "PeterChatBox",
-    //         chatLog: []
-    //     }
-    // ]);
     const [name1, setName1] = useState("");
     const [name2, setName2] = useState("");
     const [ispush, setIspush] = useState(false);
     const [messageInput, setMessageInput] = useState("");
-    const [chatBoxes, setChatBoxes] = useState([]);
+    const prechat = JSON.parse(localStorage.getItem(LOCALSTORAGE_chatbox));
+    const [chatBoxes, setChatBoxes] = useState(prechat || []);
     const [modalVisible, setModalVisible] = useState(false);
     const addChatBox = () => { setModalVisible(true); };
     const [activeKey, setActiveKey] = useState("")
@@ -62,8 +54,6 @@ const ChatRoom = ({ me, displayStatus }) => {
         variables: {
             name1: name1,
             name2: name2,
-            // name1: "jimmy",
-            // name2: "peter",
         },
     })
 
@@ -107,8 +97,6 @@ const ChatRoom = ({ me, displayStatus }) => {
     }, [subscribeToMore])
 
 
-    let newbox = []
-
     console.log("render")
     console.log(chatBoxes)
 
@@ -122,23 +110,11 @@ const ChatRoom = ({ me, displayStatus }) => {
                 me: payload.sender,
             },
         });
-
-        // SendData({
-        //     type: 'Message',
-        //     data: { key: payload.key, body: payload.body, me: payload.sender },
-        // })
     };
 
     //CHAT MODELS CALL
-    const createChatBox = (friend, me) => {
-        //比對字串大小
-        // const { loading, error, data,refetch,subscribeToMore } = useQuery(CHATBOX_QUERY,{
-        //     variables: {
-        //         name1: me,
-        //         name2: friend,
-        //     },
-        // });
-        addChat({
+    const createChatBox = async(friend, me) => {
+        await addChat({
             variables: {
                 name1: me,
                 name2: friend,
@@ -157,6 +133,7 @@ const ChatRoom = ({ me, displayStatus }) => {
         const newChatBoxes = [...chatBoxes];
         const chatLog = [];
         newChatBoxes.push({ friend, key: newKey, chatLog });
+        localStorage.setItem(LOCALSTORAGE_chatbox, JSON.stringify(newChatBoxes));
         setChatBoxes(newChatBoxes);
         setActiveKey(newKey);
         setIspush(true);
@@ -179,13 +156,17 @@ const ChatRoom = ({ me, displayStatus }) => {
             }
         } else newActiveKey = "";
         //No chatBox left
+        console.log(newChatBoxes)
+        localStorage.setItem(LOCALSTORAGE_chatbox, JSON.stringify(newChatBoxes));
         setChatBoxes(newChatBoxes);
         setActiveKey(newActiveKey);
 
     };
-
-
-
+    console.log(data)
+    console.log(name1)
+    console.log(name2)
+    console.log(chatBoxes)
+    console.log(prechat);
     return (
         <>
             <div className="App-title">
@@ -208,15 +189,48 @@ const ChatRoom = ({ me, displayStatus }) => {
                                 key={key} closable={true}>
                                 {(typeof (data) === "undefined" || data.chatbox === null) ? (<p>Loading...</p>) :
                                     (data.chatbox.messages.length === 0 ? (<p>NO MESSAGE..</p>) : (
-                                        data.chatbox.messages.map(({ sender, body }, i) => {
+                                        data.chatbox.messages.map(({sender,body,time, date}, i) => {
+                                            
                                             if (sender[0].name !== me) {
                                                 return (
-                                                    <p ><Tag color = "blue" >{sender[0].name}</Tag> : {body}</p>
+                                                    i>0 ? (
+                                                        (data.chatbox.messages[i].date !== data.chatbox.messages[i-1].date) ? 
+                                                        (
+                                                            <>
+                                                                <p style={{ textAlign: "center" }}>{date}</p>
+                                                                <p><Tag color = "blue" >{sender[0].name}</Tag> : {body} <p>{time}</p></p>
+                                                            </>
+                                                        ):(
+                                                            <p><Tag color = "blue" >{sender[0].name}</Tag> : {body} <p>{time}</p></p>)
+                                                    ):(
+                                                        <>
+                                                            <p style={{ textAlign: "center" }}>{date}</p>
+                                                            <p><Tag color = "blue" >{sender[0].name}</Tag> : {body} <p>{time}</p></p>
+                                                        </>
+                                                       
+                                                    )                                                                                                         
+                                                                                     
                                                 )
                                             }
                                             else {
                                                 return (
-                                                    <p style={{ textAlign: "right" }}>{body} : <Tag color = "blue" >{sender[0].name}</Tag></p>
+                                                    i>0 ? (
+                                                        (data.chatbox.messages[i].date !== data.chatbox.messages[i-1].date) ? 
+                                                        (
+                                                            <>
+                                                                <p style={{ textAlign: "center" }}>{date}</p>
+                                                                <p style={{ textAlign: "right" }}>{body} : <Tag color = "blue" >{sender[0].name}</Tag> <p>{time}</p></p>
+                                                            </>
+                                                        ):(
+                                                            <p style={{ textAlign: "right" }}>{body} : <Tag color = "blue" >{sender[0].name}</Tag> <p>{time}</p></p>)
+                                                    ):(
+                                                        <>
+                                                            <p style={{ textAlign: "center" }}>{date}</p>
+                                                            <p style={{ textAlign: "right" }}>{body} : <Tag color = "blue" >{sender[0].name}</Tag> <p>{time}</p></p>
+                                                        </>
+                                                       
+                                                    )                                                   
+                                    
                                                 )
                                             }
                                         })

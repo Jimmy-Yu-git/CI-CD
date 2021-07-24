@@ -6,6 +6,8 @@ query
         chatbox(name1:$name1,name2:$name2){
           name
           messages{
+                time
+                date
                 body
                 sender{
               name

@@ -28,6 +28,9 @@ const Query ={
         };
         const chatBoxName = makeName(name1, name2);
         let box = await db.ChatBoxModel.findOne({ name: chatBoxName });
+        let nullbox = [];
+        console.log(chatBoxName)
+        console.log("11")
         console.log(box)
         return box
             // .populate('users')

@@ -10,6 +10,8 @@ const messageSchema = new Schema({
   //chatBox: { type: mongoose.Types.ObjectId, ref: 'ChatBox' },
   sender: { type: mongoose.Types.ObjectId, ref: 'User' },
   body: { type: String, required: true },
+  date: {type:String,require:true},
+  time: {type:String,require:true}
 });
 
 const chatBoxSchema = new Schema({

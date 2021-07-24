@@ -37,6 +37,8 @@ type ChatBox{
 type Message{
   sender : [Users]
   body : String
+  time : String
+  date : String
 }
 type Users{
   name : String
